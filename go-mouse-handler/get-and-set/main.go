@@ -33,7 +33,7 @@ func main() {
 	fmt.Printf("Current mouse position: X=%d, Y=%d\n", pt.X, pt.Y)
 
 	// Move the mouse to a new position
-	newX, newY := pt.X+100, pt.Y+100
+	newX, newY := pt.X+500, pt.Y+500
 	SetCursorPos(newX, newY)
 
 	// Get the updated mouse coordinates
