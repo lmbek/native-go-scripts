@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"image"
+	"image/color"
 	"image/jpeg"
 	"image/png"
 	"os"
@@ -22,6 +23,11 @@ func removeFalseFlags(err error) error {
 
 func main() {
 	run()
+
+	// Example usage of getColorAtPixel function
+	screenshot, _ := loadImage("screenshot.png")
+	r, g, b, a := getColorAtPixel(screenshot, 100, 100)
+	fmt.Printf("Color at pixel (100, 100): R=%d, G=%d, B=%d, A=%d\n", r, g, b, a)
 }
 
 func run() {
@@ -267,4 +273,32 @@ func deleteDC(hdc syscall.Handle) (uintptr, uintptr, error) {
 		return 0, 0, fmt.Errorf("failed to delete device context")
 	}
 	return result, 0, err
+}
+
+func getColorAtPixel(img *image.RGBA, x, y int) (uint8, uint8, uint8, uint8) {
+	idx := (y-img.Rect.Min.Y)*img.Stride + (x-img.Rect.Min.X)*4
+	return img.Pix[idx], img.Pix[idx+1], img.Pix[idx+2], img.Pix[idx+3]
+}
+
+func loadImage(filename string) (*image.RGBA, error) {
+	file, err := os.Open(filename)
+	if err != nil {
+		return nil, err
+	}
+	defer file.Close()
+
+	img, _, err := image.Decode(file)
+	if err != nil {
+		return nil, err
+	}
+
+	rgbaImage := image.NewRGBA(img.Bounds())
+	for y := img.Bounds().Min.Y; y < img.Bounds().Max.Y; y++ {
+		for x := img.Bounds().Min.X; x < img.Bounds().Max.X; x++ {
+			r, g, b, a := img.At(x, y).RGBA()
+			rgbaImage.SetRGBA(x, y, color.RGBA{uint8(r >> 8), uint8(g >> 8), uint8(b >> 8), uint8(a >> 8)})
+		}
+	}
+
+	return rgbaImage, nil
 }
