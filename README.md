@@ -8,7 +8,8 @@ Some go scripts that can:
 * prompt folder selection
 
 ## Note:
-This only works on windows as we use windows api
+For winapi only windows works
+For x11 only linux works
 
 ## Article about the use of win32 and some of its risks
 As this package uses unsafe and syscalls and depend on the windows operating system, this article should help understand some of it
